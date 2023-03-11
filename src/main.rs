@@ -6,28 +6,24 @@ pub mod SA_IS {
 
         let n = s.len();
         let mut tp = vec![false; n];
-        let mut lms_indices: Vec<usize> = Vec::with_capacity(n);
 
         tp[n-1] = true; // sentinel is S-type
 
         for i in (0..=n-2).rev() {
             // check whether s[i] is S-type or L-type
             tp[i] = s[i] < s[i+1] || (s[i]==s[i+1] && tp[i+1]);
-            if is_lms(i+1, &tp) {
-                lms_indices.push(i+1);
-            }
         }
-
-        let lms_cnt = lms_indices.len();
 
         // stage 1: reduce the problem by at least 1/2
         // sort all the LMS-substrings
         let mut bkt: Vec<i32> = vec![0; k as usize];
         get_buckets(s, &mut bkt, true);
         for i in 0..n { sa[i] = -1; }
-        for i in lms_indices.iter().rev() {
-            bkt[s[*i] as usize] -= 1;
-            sa[bkt[s[*i] as usize] as usize] = *i as i32;
+        for i in 1..n {
+            if is_lms(i, &tp) { // check whether s[i] is an LMS-substring
+                bkt[s[i] as usize] -= 1;
+                sa[bkt[s[i] as usize] as usize] = i as i32;
+            }
         }
         induced_sorting(s, sa, &tp, &mut bkt); // sort the LMS-substrings
 
@@ -38,6 +34,7 @@ pub mod SA_IS {
 
         // for sentinel (i = 0)
         new_s[(sa[0] / 2) as usize] = 0;
+        let mut lms_cnt: usize = 1;
         let mut name: usize = 1;
         let mut prev_pos_init: i32 = sa[0];
 
@@ -65,6 +62,7 @@ pub mod SA_IS {
 
                 if diff { name += 1; prev_pos_init = cur_pos_init; }
                 new_s[(cur_pos_init / 2) as usize] = (name - 1) as i32;
+                lms_cnt += 1;
             }
         }
 
@@ -91,9 +89,11 @@ pub mod SA_IS {
         // stage 3: induce the result for the original problem
         get_buckets(s, &mut bkt, true);
         j = 0;
-        for i in lms_indices.iter().rev() {
-            new_s[j] = *i as i32;
-            j += 1;
+        for i in 1..n {
+            if is_lms(i, &tp) {
+                new_s[j] = i as i32;
+                j += 1;
+            }
         }
         for i in 0..lms_cnt {
             sa[i] = new_s[sa[i] as usize];
