@@ -1,6 +1,6 @@
 # SA-IS
 
-Suffix Array を線形時間で構築するためのアルゴリズムである，SA-IS の実装．この手法が提案された論文は [Two Efficient Algorithms for Linear Time Suffix Array Construction](https://ieeexplore.ieee.org/document/5582081) であり，このレポジトリの実装は論文のサンプルコードをほぼそのまま Rust に移植したものである．
+Suffix Array を線形時間で構築するためのアルゴリズムである，SA-IS の実装．この手法が提案された論文は [Two Efficient Algorithms for Linear Time Suffix Array Construction](https://ieeexplore.ieee.org/document/5582081) であり，このリポジトリの実装は論文のサンプルコードをほぼそのまま Rust に移植したものである．
 
 論文のサンプルコード（C で書かれている）では配列を使いまわしてメモリ使用量を削減しているが，Rust の借用権により一部再現できないところがあったため，少し妥協をしてメモリ使用量が多くなっている．
 
